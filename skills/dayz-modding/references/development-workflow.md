@@ -186,6 +186,8 @@ void OnRPC_SetValue(CallType type, ParamsReadContext ctx, PlayerIdentity sender,
 
 ### Build Commands
 
+> **Note.** `dev.py` below is an example of a project-local helper script. It is not shipped with this skill and does not exist in a fresh project. Use your own build commands (AddonBuilder / FileBank) when the project has no `dev.py`.
+
 ```bash
 # Build all PBOs
 python dev.py build
