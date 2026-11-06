@@ -760,11 +760,27 @@ Class
 
 ## Functions & Methods: Additional Details
 
-### Method Overloading is NOT Supported
-Two methods with the same name cause a compile error. Workarounds:
-- Different names: `Send()`, `SendToPlayer()`, `SendToAll()`
-- `Ex()` suffix convention: `ExplosionEffects()` → `ExplosionEffectsEx()` (DayZ vanilla pattern)
-- Default parameters: `void Send(string data, bool guaranteed = true)`
+### Method Overloading
+Overloading by parameter type and by parameter count is supported — the compiler resolves the call by signature:
+
+```c
+class Builder
+{
+    void Add(int value)
+    {
+        // ...
+    }
+
+    void Add(string value)
+    {
+        // ...
+    }
+}
+```
+
+Vanilla examples: `PPERequesterBank.IsRequesterRunning(typename)` and `IsRequesterRunning(int)`, `MapNavigationBehaviour.IsOutOfMap(vector)` and `IsOutOfMap(EntityAI)`, `Building.CanDoorBeClosed(int, Object)` and `CanDoorBeClosed(int)`.
+
+The `Ex()` suffix in vanilla (`ExplosionEffects` → `ExplosionEffectsEx`) is a naming habit, not a workaround for a missing feature. Do not overload methods that do conceptually different things — give those separate names. Default parameters still cover the case where only the argument count differs.
 
 ### Standalone (Global) Functions
 Functions can exist outside any class. Rare but used in vanilla for utility helpers.
