@@ -1,11 +1,11 @@
 ---
 name: dayz-modding
-description: ALWAYS use when touching ANY DayZ file (.c, config.cpp, mod.cpp, .layout, types.xml) or discussing DayZ modding, Enforce Script, or the Enfusion engine. Activate even if the user does not explicitly mention DayZ — if the code imports DayZ classes (PlayerBase, EntityAI, ItemBase, MissionServer), uses DayZ APIs (GetGame(), Class.CastTo(), ScriptRPC), or references DayZ patterns (modded class, CfgPatches, requiredAddons), this skill MUST be loaded. Covers 40+ critical gotchas, complete engine API across 20+ systems, mod architecture, RPC networking, GUI widgets, performance optimization, and professional patterns from COT, VPP, and Expansion mods. Without this skill, the agent WILL produce broken Enforce Script code.
+description: Use when writing, reviewing, or shipping a DayZ mod — mod architecture, engine API patterns (entities, RPC, timers, file I/O, GUI widgets), performance, PBO build and signing, Central Economy, and the model/asset pipeline. Load this for build, deploy, economy, and asset work; for Enforce Script language and code-style rules prefer the dayz-scripting and dayz-ui skills when they are installed. Mentions of DayZ classes (PlayerBase, EntityAI, ItemBase, MissionServer), modded class, CfgPatches, requiredAddons, or DayZ APIs (Class.CastTo, ScriptRPC) indicate this skill applies.
 license: MIT
 compatibility: Works with any AI coding agent. Designed for DayZ modding in Enforce Script (.c files).
 metadata:
   author: StarDZ-Team
-  version: "2.0.0"
+  version: "2.0.1"
   source: https://github.com/StarDZ-Team/dayz-modding-skill
 ---
 
@@ -124,7 +124,7 @@ These rules are NON-NEGOTIABLE. Violating any produces broken code.
 1. **`JsonFileLoader<T>.JsonLoadFile()` returns `void`** — Pass ref object, don't assign return
 2. **`GetGame().GetPlayer()` returns `Man`** — Cast to `PlayerBase` with `Class.CastTo()`
 3. **`GetGame().GetPlayer()` returns `null` on dedicated server** — Use `GetGame().GetPlayers()` instead
-4. **`autoptr` is NOT used** — Use explicit `ref` keyword
+4. **`autoptr` is rare, `ref` belongs on fields** — 13 uses in vanilla, mostly tooling code. A bare local is already a strong reference; `ref` on a local or a return type is redundant but harmless. Put `ref` on class fields and inside `array<ref T>` / `map<int, ref T>`.
 5. **`ref` cycles cause memory leaks** — One side MUST use weak (raw) reference
 6. **`array.Remove(index)` is UNORDERED** — Swaps with last element. Use `RemoveOrdered()` for order
 7. **`map.Insert()` does NOT update existing keys** — Use `map.Set()` for insert-or-update
@@ -462,7 +462,7 @@ Script compiles but nothing happens? → Flowchart D
 
 ### Memory Safety
 - [ ] No `ref` cycles
-- [ ] No `autoptr` (use `ref`)
+- [ ] `ref` on owning class fields (not needed on locals/returns)
 - [ ] Static refs nulled in cleanup
 - [ ] Singletons destroyed in OnMissionFinish
 - [ ] ScriptInvoker listeners removed on cleanup
